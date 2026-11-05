@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper to check authentication
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper to check user ownership
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User profile access
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      
+      // Payment methods subcollection
+      match /paymentMethods/{paymentMethodId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Concierge real-time chat messages subcollection
+      match /conciergeMessages/{messageId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Orders collection: clients can read and create their own orders
+    match /orders/{orderId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

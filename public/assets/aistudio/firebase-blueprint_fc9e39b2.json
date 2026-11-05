@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "users": {
+      "title": "UserProfile",
+      "description": "User profile with client VIP tier and preferences",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "clientTier": { "type": "string", "enum": ["Silver", "Gold", "Platinum", "Couture Elite"] },
+        "completedSpend": { "type": "number" },
+        "preferredSalon": { "type": "string" },
+        "phone": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "orders": {
+      "title": "ClientOrder",
+      "description": "Client purchases and payment transaction records styled after Dior.com client space",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "userId": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerName": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "currency": { "type": "string" },
+        "paymentStatus": { "type": "string", "enum": ["Settled / Confirmed", "Processing", "Authorized"] },
+        "paymentMethod": { "type": "string" },
+        "paymentReference": { "type": "string" },
+        "cardBrand": { "type": "string" },
+        "cardLast4": { "type": "string" },
+        "itemCount": { "type": "number" },
+        "items": { "type": "string" },
+        "shippingAddress": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["orderId", "userId", "totalAmount"]
+    },
+    "paymentMethods": {
+      "title": "PaymentMethod",
+      "description": "Saved tokenized luxury payment cards and client billing preferences",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "cardholderName": { "type": "string" },
+        "cardBrand": { "type": "string" },
+        "last4": { "type": "string" },
+        "expiry": { "type": "string" },
+        "isDefault": { "type": "boolean" },
+        "billingCity": { "type": "string" },
+        "billingCountry": { "type": "string" }
+      },
+      "required": ["id", "userId", "last4"]
+    },
+    "conciergeMessages": {
+      "title": "ConciergeChatMessage",
+      "description": "Real-time private stylist and concierge communications for Elite patrons",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "sender": { "type": "string", "enum": ["member", "stylist", "system"] },
+        "stylistName": { "type": "string" },
+        "stylistRole": { "type": "string" },
+        "text": { "type": "string" },
+        "referencedProduct": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "isRead": { "type": "boolean" }
+      },
+      "required": ["userId", "sender", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profile documents keyed by auth UID"
+    },
+    "/orders/{orderId}": {
+      "schema": "orders",
+      "description": "Itemized client purchase and transaction payment records"
+    },
+    "/users/{userId}/paymentMethods/{paymentMethodId}": {
+      "schema": "paymentMethods",
+      "description": "Subcollection of saved client payment methods"
+    },
+    "/users/{userId}/conciergeMessages/{messageId}": {
+      "schema": "conciergeMessages",
+      "description": "Subcollection of real-time stylist concierge messages"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Maison Aurelia · Haute Couture & Prêt-à-Porter",
+  "description": "High classic luxury fashion house featuring minimalist silhouettes, artisanal craftsmanship, curated collections, and private salon appointments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
