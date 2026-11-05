@@ -1,6 +1,13 @@
 import { Product } from '../types';
+import HERO_IMG from '../assets/images/luxelayout_hero_editorial_1793863467357.jpg';
+import COAT_IMG from '../assets/images/product_cashmere_coat_1793863469591.jpg';
+import HANDBAG_IMG from '../assets/images/product_calfskin_handbag_1793863469604.jpg';
+import GOWN_IMG from '../assets/images/product_silk_evening_gown_1793863469820.jpg';
+import TIMEPIECE_IMG from '../assets/images/product_haute_timepiece_1793863469941.jpg';
+import TUXEDO_IMG from '../assets/images/product_smoking_tuxedo_1793864380559.jpg';
+import EAR_CUFFS_IMG from '../assets/images/product_dorure_ear_cuffs_1793864379729.jpg';
 
-export const HERO_IMAGE = '/src/assets/images/luxelayout_hero_editorial_1793863467357.jpg';
+export const HERO_IMAGE = HERO_IMG;
 
 export const LUXURY_PRODUCTS: Product[] = [
   {
@@ -11,7 +18,7 @@ export const LUXURY_PRODUCTS: Product[] = [
     categoryLabel: 'Haute Outerwear',
     price: 4850,
     currency: 'USD',
-    image: '/src/assets/images/product_cashmere_coat_1793863469591.jpg',
+    image: COAT_IMG,
     description:
       'Constructed over 52 hours of artisanal hand-finishing, this double-faced cashmere overcoat features a structured notched collar, razor-sharp shoulder pad architecture, and horn buttons sourced from sustainable artisanal ranches.',
     details: [
@@ -40,7 +47,7 @@ export const LUXURY_PRODUCTS: Product[] = [
     categoryLabel: 'Maroquinerie d’Exception',
     price: 3920,
     currency: 'USD',
-    image: '/src/assets/images/product_calfskin_handbag_1793863469604.jpg',
+    image: HANDBAG_IMG,
     description:
       'Sculpted from smooth French box calfskin with jewel-grade 24k brushed gold vermeil hardware. Finished with hand-painted raw edges and lined in velvety goatskin nappa with an interior numbered brass plaque.',
     details: [
@@ -69,7 +76,7 @@ export const LUXURY_PRODUCTS: Product[] = [
     categoryLabel: 'Haute Couture Evening',
     price: 6400,
     currency: 'USD',
-    image: '/src/assets/images/product_silk_evening_gown_1793863469820.jpg',
+    image: GOWN_IMG,
     description:
       'A masterwork of Grecian architectural draping, hand-pleated on the dress form from four-ply silk crepe de chine. The asymmetrical off-the-shoulder mantle flows into a seamless column silhouette with an internal silk grosgrain waist stay.',
     details: [
@@ -98,7 +105,7 @@ export const LUXURY_PRODUCTS: Product[] = [
     categoryLabel: 'Haute Horlogerie',
     price: 18500,
     currency: 'USD',
-    image: '/src/assets/images/product_haute_timepiece_1793863469941.jpg',
+    image: TIMEPIECE_IMG,
     description:
       'Engineered in Le Brassus in a limited run of 25 serialized examples. Features an 18k rose gold case with platinum bezel accents, grand feu enamel dial, hand-blued feuille hands, and an alligator leather strap handmade in Paris.',
     details: [
@@ -126,7 +133,7 @@ export const LUXURY_PRODUCTS: Product[] = [
     categoryLabel: 'Tailoring & Evening',
     price: 3600,
     currency: 'USD',
-    image: '/src/assets/images/product_smoking_tuxedo_1793864380559.jpg',
+    image: TUXEDO_IMG,
     description:
       'An iconic silhouette inspired by Parisian haute couture. Cut from high-twist Super 150s virgin wool with lustrous silk faille peak lapels, structured roped shoulders, and a sculpted waist that commands regal presence.',
     details: [
@@ -153,7 +160,7 @@ export const LUXURY_PRODUCTS: Product[] = [
     categoryLabel: 'Haute Joaillerie',
     price: 2450,
     currency: 'USD',
-    image: '/src/assets/images/product_dorure_ear_cuffs_1793864379729.jpg',
+    image: EAR_CUFFS_IMG,
     description:
       'Cast in recycled 925 sterling silver layered with 5 microns of 24-karat royal gold, accented with conflict-free pavé-set natural white diamonds (0.45ct total weight, VVS1 clarity).',
     details: [
