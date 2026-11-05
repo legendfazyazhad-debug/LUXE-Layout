@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import { initializeFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
@@ -20,9 +20,13 @@ interface ExtendedFirebaseConfig {
 
 const config = firebaseConfig as ExtendedFirebaseConfig;
 
-export const db = config.firestoreDatabaseId
-  ? getFirestore(app, config.firestoreDatabaseId)
-  : getFirestore(app);
+export const db = initializeFirestore(
+  app,
+  {
+    experimentalForceLongPolling: true,
+  },
+  config.firestoreDatabaseId
+);
 export const auth = getAuth(app);
 
 export enum OperationType {
@@ -76,9 +80,7 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 // Test connection on boot (non-blocking)
 async function testConnection() {
   try {
-    if (auth.currentUser) {
-      await getDocFromServer(doc(db, 'users', auth.currentUser.uid));
-    }
+    await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
     if (error instanceof Error && error.message.includes('the client is offline')) {
       console.info('Firestore client is in offline mode or waiting for initial connection.');

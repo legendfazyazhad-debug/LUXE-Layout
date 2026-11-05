@@ -6,6 +6,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Connectivity test endpoint
+    match /test/{docId} {
+      allow read: if true;
+    }
+
     // Helper functions
     function isAuthenticated() {
       return request.auth != null;
