@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { X, Crown, CreditCard, Package, LogIn, LogOut, Check, Sparkles, Mail } from 'lucide-react';
 import { User } from 'firebase/auth';
-import { googleSignIn, logout } from '../lib/auth-workspace';
+import { googleSignIn, logout, getReadableAuthError } from '../lib/auth-workspace';
 import { OrderRecord, SavedPaymentMethod, UserVIPProfile } from '../types';
+import LUXE_LOGO from '../assets/images/luxelayout_logo_hallmark_1793865614391.jpg';
 
 interface ClientSpaceModalProps {
   isOpen: boolean;
@@ -35,10 +36,10 @@ export const ClientSpaceModal: React.FC<ClientSpaceModalProps> = ({
     setIsSigningIn(true);
     setAuthError(null);
     try {
-      await googleSignIn();
+      await googleSignIn(false);
     } catch (err: any) {
       console.warn('Google sign-in status:', err);
-      setAuthError('Authentication notice: You may continue in guest patron mode or re-attempt.');
+      setAuthError(getReadableAuthError(err));
     } finally {
       setIsSigningIn(false);
     }
@@ -89,9 +90,13 @@ export const ClientSpaceModal: React.FC<ClientSpaceModalProps> = ({
       >
         {/* Header */}
         <div className="px-6 py-5 border-b border-[#E8E4DD] flex items-center justify-between bg-[#F7F4EE]">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] bg-[#FAF3E0]">
-              <Crown className="w-4 h-4" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xs overflow-hidden border border-[#D4AF37]/60 shadow-xs shrink-0 bg-[#141413]">
+              <img
+                src={LUXE_LOGO}
+                alt="Luxe Layout Hallmark"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <h2 className="font-serif-luxury text-2xl text-[#141413] tracking-wide">

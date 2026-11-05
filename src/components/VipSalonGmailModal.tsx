@@ -15,6 +15,7 @@ import {
 import { User } from 'firebase/auth';
 import { googleSignIn, getAccessToken } from '../lib/auth-workspace';
 import { fetchVipSalonEmails, sendGmailMessage, GmailMessageSummary } from '../lib/gmail';
+import LUXE_LOGO from '../assets/images/luxelayout_logo_hallmark_1793865614391.jpg';
 
 interface VipSalonGmailModalProps {
   isOpen: boolean;
@@ -184,9 +185,13 @@ export const VipSalonGmailModal: React.FC<VipSalonGmailModalProps> = ({
       >
         {/* Header */}
         <div className="px-6 py-5 border-b border-[#E8E4DD] flex items-center justify-between bg-[#F7F4EE]">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#141413] text-[#D4AF37] flex items-center justify-center">
-              <Mail className="w-4 h-4" />
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xs overflow-hidden border border-[#D4AF37]/60 shadow-xs shrink-0 bg-[#141413]">
+              <img
+                src={LUXE_LOGO}
+                alt="Luxe Layout Logo Emblem"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Sparkles, User, ShieldCheck } from 'lucide-react';
 import { collection, onSnapshot, query, orderBy, setDoc, doc } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { db, auth, handleFirestoreError, OperationType } from '../lib/firebase';
 import { ConciergeMessage, Product } from '../types';
+import LUXE_LOGO from '../assets/images/luxelayout_logo_hallmark_1793865614391.jpg';
 
 interface ConciergeChatDrawerProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export const ConciergeChatDrawer: React.FC<ConciergeChatDrawerProps> = ({
 
   // Firestore real-time listener if authenticated user exists
   useEffect(() => {
-    if (!userId || userId === 'guest') return;
+    if (!auth.currentUser || auth.currentUser.uid !== userId) return;
 
     const messagesCol = collection(db, 'users', userId, 'conciergeMessages');
     const q = query(messagesCol, orderBy('timestamp', 'asc'));
@@ -114,9 +115,9 @@ export const ConciergeChatDrawer: React.FC<ConciergeChatDrawerProps> = ({
     setInputText('');
     setIsTyping(true);
 
-    // Save to Firestore if available
+    // Save to Firestore if user is authenticated
     try {
-      if (userId && userId !== 'guest') {
+      if (auth.currentUser && auth.currentUser.uid === userId) {
         const msgDocRef = doc(db, 'users', userId, 'conciergeMessages', userMsg.id);
         await setDoc(msgDocRef, userMsg);
       }
@@ -162,7 +163,7 @@ export const ConciergeChatDrawer: React.FC<ConciergeChatDrawerProps> = ({
       setIsTyping(false);
 
       try {
-        if (userId && userId !== 'guest') {
+        if (auth.currentUser && auth.currentUser.uid === userId) {
           const msgDocRef = doc(db, 'users', userId, 'conciergeMessages', stylistMsg.id);
           await setDoc(msgDocRef, stylistMsg);
         }
@@ -185,8 +186,12 @@ export const ConciergeChatDrawer: React.FC<ConciergeChatDrawerProps> = ({
         {/* Drawer Header */}
         <div className="px-6 py-4 border-b border-[#E8E4DD] flex items-center justify-between bg-[#F7F4EE]">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#141413] text-[#FAF9F6] flex items-center justify-center font-serif-luxury text-sm">
-              HV
+            <div className="w-10 h-10 rounded-xs overflow-hidden border border-[#D4AF37]/60 shadow-xs shrink-0 bg-[#141413]">
+              <img
+                src={LUXE_LOGO}
+                alt="Luxe Layout Hallmark"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

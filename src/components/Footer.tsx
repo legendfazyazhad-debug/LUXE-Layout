@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Check } from 'lucide-react';
 import { SALON_LOCATIONS } from '../data/products';
+import LUXE_LOGO from '../assets/images/luxelayout_logo_hallmark_1793865614391.jpg';
 
 interface FooterProps {
   onOpenSalonModal: (location?: string) => void;
@@ -34,13 +35,24 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-12 border-b border-[#2C2926]">
           {/* Brand Philosophy */}
           <div className="lg:col-span-5 space-y-4">
-            <span className="font-serif-luxury text-3xl tracking-[0.2em] uppercase font-light text-white block">
-              Luxe Layout
-            </span>
-            <p className="text-xs tracking-[0.25em] uppercase text-[#D4AF37] font-sans">
-              Haute Couture & Prêt-à-Porter
-            </p>
-            <p className="text-xs text-[#A8A39A] leading-relaxed max-w-sm font-sans">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-xs overflow-hidden border border-[#D4AF37]/60 bg-[#1C1B1A] shadow-sm shrink-0">
+                <img
+                  src={LUXE_LOGO}
+                  alt="Luxe Layout Logo Emblem"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <span className="font-serif-luxury text-3xl tracking-[0.2em] uppercase font-light text-white block leading-tight">
+                  Luxe Layout
+                </span>
+                <p className="text-[10px] tracking-[0.25em] uppercase text-[#D4AF37] font-sans">
+                  Haute Couture & Prêt-à-Porter
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-[#A8A39A] leading-relaxed max-w-sm font-sans pt-1">
               Founded in Paris. Preserving the supreme traditions of French craftsmanship, bespoke
               tailoring, and noble materiality for an international community of patrons.
             </p>

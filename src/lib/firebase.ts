@@ -76,7 +76,9 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 // Test connection on boot (non-blocking)
 async function testConnection() {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
+    if (auth.currentUser) {
+      await getDocFromServer(doc(db, 'users', auth.currentUser.uid));
+    }
   } catch (error) {
     if (error instanceof Error && error.message.includes('the client is offline')) {
       console.info('Firestore client is in offline mode or waiting for initial connection.');

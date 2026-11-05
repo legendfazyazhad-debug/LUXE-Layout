@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Lock, CheckCircle2, CreditCard, Shield, Truck, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { CartItem, OrderRecord } from '../types';
 
 interface CheckoutModalProps {
@@ -67,9 +67,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       }))
     );
 
+    const currentUid = auth.currentUser?.uid || userId || 'patron-vip-guest';
+
     const orderData: OrderRecord = {
       orderId: generatedOrderId,
-      userId: userId || 'patron-vip-guest',
+      userId: currentUid,
       customerEmail: email,
       customerName: name,
       totalAmount: subtotal,
@@ -86,9 +88,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     };
 
     try {
-      // Save order to Firestore
-      const ordersRef = collection(db, 'orders');
-      await setDoc(doc(ordersRef, generatedOrderId), orderData);
+      // Save order to Firestore if user is authenticated
+      if (auth.currentUser) {
+        const ordersRef = collection(db, 'orders');
+        await setDoc(doc(ordersRef, generatedOrderId), orderData);
+      }
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, `orders/${generatedOrderId}`);
       // Proceed with local confirmation even if offline

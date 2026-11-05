@@ -66,6 +66,9 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, onBookSalonClick }) 
             <img
               src={HERO_IMAGE}
               alt="Luxe Layout Haute Couture Editorial Campaign Silhouette"
+              loading="eager"
+              fetchPriority={"high" as any}
+              decoding="sync"
               className="w-full h-full object-cover object-center group-hover:scale-[1.015] transition-transform duration-700 ease-out"
               referrerPolicy="no-referrer"
             />

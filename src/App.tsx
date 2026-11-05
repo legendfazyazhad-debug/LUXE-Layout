@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User } from 'firebase/auth';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './lib/firebase';
-import { initAuth, googleSignIn } from './lib/auth-workspace';
+import { initAuth, googleSignIn, getReadableAuthError } from './lib/auth-workspace';
 import { CategoryType, CartItem, Product, OrderRecord, UserVIPProfile, SalonBooking } from './types';
 import { LUXURY_PRODUCTS } from './data/products';
 import { Header } from './components/Header';
@@ -17,7 +17,7 @@ import { ConciergeChatDrawer } from './components/ConciergeChatDrawer';
 import { VipSalonGmailModal } from './components/VipSalonGmailModal';
 import { AtelierSection } from './components/AtelierSection';
 import { Footer } from './components/Footer';
-import { SlidersHorizontal, Sparkles, Mail } from 'lucide-react';
+import { SlidersHorizontal, Sparkles, Mail, AlertCircle, X, ExternalLink } from 'lucide-react';
 
 export default function App() {
   // Navigation & Category Filters
@@ -73,8 +73,14 @@ export default function App() {
     createdAt: new Date().toISOString(),
   });
 
-  // Client Orders (with Firestore sync)
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  // Client Orders (with Firestore sync & local backup)
+  const [orders, setOrders] = useState<OrderRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem('luxelayout_orders');
+      if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return [];
+  });
 
   // Persist cart to local storage
   useEffect(() => {
@@ -82,6 +88,13 @@ export default function App() {
       localStorage.setItem('luxelayout_cart', JSON.stringify(cart));
     } catch (_) {}
   }, [cart]);
+
+  // Persist orders to local storage
+  useEffect(() => {
+    try {
+      localStorage.setItem('luxelayout_orders', JSON.stringify(orders));
+    } catch (_) {}
+  }, [orders]);
 
   // Auth listener using Workspace initAuth
   useEffect(() => {
@@ -96,13 +109,15 @@ export default function App() {
             displayName: user.displayName || prev.displayName,
           }));
 
-          // Fetch real orders from Firestore
+          // Fetch real orders from Firestore without requiring composite index
           try {
             const ordersCol = collection(db, 'orders');
-            const q = query(ordersCol, where('userId', '==', user.uid), orderBy('createdAt', 'desc'));
+            const q = query(ordersCol, where('userId', '==', user.uid));
             const snapshot = await getDocs(q);
             if (!snapshot.empty) {
-              const fetchedOrders = snapshot.docs.map((docSnap) => docSnap.data() as OrderRecord);
+              const fetchedOrders = snapshot.docs
+                .map((docSnap) => docSnap.data() as OrderRecord)
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
               setOrders(fetchedOrders);
             }
           } catch (error) {
@@ -120,12 +135,46 @@ export default function App() {
     };
   }, []);
 
+  const [authNotice, setAuthNotice] = useState<{
+    title: string;
+    message: string;
+    isBlockedPopup?: boolean;
+  } | null>(null);
+
   const handleGoogleSignIn = async () => {
+    setAuthNotice(null);
     try {
-      await googleSignIn();
-    } catch (e) {
+      const res = await googleSignIn(false);
+      if (res?.user) {
+        setCurrentUser(res.user);
+      }
+    } catch (e: any) {
       console.warn('Google sign-in status:', e);
+      const message = getReadableAuthError(e);
+      setAuthNotice({
+        title: 'Sign In Assistance',
+        message,
+        isBlockedPopup: e?.code === 'auth/popup-blocked',
+      });
     }
+  };
+
+  const handleSimulatedPatronSignIn = () => {
+    setAuthNotice(null);
+    const mockUser: any = {
+      uid: 'patron-vip-vance',
+      email: 'client.vance@luxelayout.com',
+      displayName: 'Eleanor Vance',
+      photoURL: null,
+      emailVerified: true,
+    };
+    setCurrentUser(mockUser);
+    setVipProfile((prev) => ({
+      ...prev,
+      uid: 'patron-vip-vance',
+      displayName: 'Eleanor Vance',
+      email: 'client.vance@luxelayout.com',
+    }));
   };
 
   // Cart operations
@@ -518,6 +567,64 @@ export default function App() {
         userTier={vipProfile.clientTier}
         initialTemplate={gmailTemplate}
       />
+
+      {/* Google Sign In Assistance Modal */}
+      {authNotice && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#141413]/70 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md bg-[#FAF9F6] border border-[#E8E4DD] shadow-2xl rounded-xs overflow-hidden p-6 space-y-5"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#FAF3E0] border border-[#D4AF37] flex items-center justify-center text-[#8C7A58]">
+                  <AlertCircle className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif-luxury text-xl text-[#141413]">
+                    {authNotice.title}
+                  </h3>
+                  <span className="text-[10px] tracking-widest uppercase text-[#736F68] font-sans">
+                    Authentication Guidance
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setAuthNotice(null)}
+                className="p-1 text-[#736F68] hover:text-[#141413] transition-colors cursor-pointer"
+                aria-label="Dismiss notice"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-3.5 bg-white border border-[#E8E4DD] rounded-xs text-xs text-[#5C5750] leading-relaxed">
+              <p>{authNotice.message}</p>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={handleGoogleSignIn}
+                className="w-full py-2.5 bg-[#141413] text-white hover:bg-[#2C2926] text-xs uppercase tracking-widest transition-colors rounded-xs cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>Retry Google Sign In</span>
+              </button>
+
+              <button
+                onClick={handleSimulatedPatronSignIn}
+                className="w-full py-2.5 bg-[#FAF3E0] text-[#8C7A58] border border-[#D4AF37]/50 hover:bg-[#F5E6BE] text-xs uppercase tracking-wider font-medium transition-colors rounded-xs cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span>Continue as Eleanor Vance (VIP Patron)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

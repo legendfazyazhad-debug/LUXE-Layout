@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShoppingBag, User, Sparkles, MessageSquare, Mail, LogIn } from 'lucide-react';
 import { CartItem } from '../types';
+import LUXE_LOGO from '../assets/images/luxelayout_logo_hallmark_1793865614391.jpg';
 
 interface HeaderProps {
   cart: CartItem[];
@@ -50,17 +51,26 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Strict 3-Zone Top Bar Contract */}
       <header className="sticky top-0 z-40 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#E8E4DD] transition-all">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between gap-8">
-          {/* Zone 1: Single element wordmark */}
+          {/* Zone 1: Single element wordmark with official hallmark logo */}
           <a
             href="#"
-            className="flex flex-col group whitespace-nowrap shrink-0 focus:outline-none"
+            className="flex items-center gap-3.5 group whitespace-nowrap shrink-0 focus:outline-none"
           >
-            <span className="font-serif-luxury text-2xl lg:text-3xl tracking-[0.2em] font-normal uppercase text-[#141413] group-hover:text-[#8C7A58] transition-colors">
-              Luxe Layout
-            </span>
-            <span className="text-[9px] tracking-[0.35em] uppercase text-[#736F68] -mt-1 font-sans">
-              Haute Couture
-            </span>
+            <div className="w-10 h-10 rounded-xs overflow-hidden border border-[#D4AF37]/60 shadow-xs shrink-0 bg-[#141413]">
+              <img
+                src={LUXE_LOGO}
+                alt="Luxe Layout Monogram Hallmark"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif-luxury text-2xl lg:text-3xl tracking-[0.2em] font-normal uppercase text-[#141413] group-hover:text-[#8C7A58] transition-colors leading-tight">
+                Luxe Layout
+              </span>
+              <span className="text-[9px] tracking-[0.35em] uppercase text-[#736F68] font-sans">
+                Haute Couture
+              </span>
+            </div>
           </a>
 
           {/* Zone 2: 4-5 clean single-line text navigation links */}
@@ -117,14 +127,14 @@ export const Header: React.FC<HeaderProps> = ({
                 ) : (
                   <User className="w-4 h-4 text-[#141413]" />
                 )}
-                <span className="hidden xl:inline font-sans text-xs font-medium text-[#141413]">
+                <span className="hidden sm:inline font-sans text-xs font-medium text-[#141413]">
                   {userDisplayName ? userDisplayName.split(' ')[0] : userTier}
                 </span>
               </button>
             ) : (
               <button
                 onClick={onGoogleSignIn}
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white border border-[#D9D4CC] hover:border-[#141413] text-[#141413] text-[11px] uppercase tracking-wider rounded-xs transition-colors cursor-pointer"
+                className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-white border border-[#D9D4CC] hover:border-[#141413] text-[#141413] text-[11px] uppercase tracking-wider rounded-xs transition-colors cursor-pointer shadow-2xs"
                 title="Sign in with Google"
               >
                 <div className="w-3.5 h-3.5 shrink-0">
@@ -147,7 +157,8 @@ export const Header: React.FC<HeaderProps> = ({
                     />
                   </svg>
                 </div>
-                <span>Sign in</span>
+                <span className="hidden sm:inline">Sign in with Google</span>
+                <span className="sm:hidden text-[10px]">Sign in</span>
               </button>
             )}
 
